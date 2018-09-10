@@ -62,23 +62,7 @@ const DatasetsTable = (props) => {
                 </a>
               </td>
               <td>
-                <Badge className="mr-2" color={dataset.session.done ? 'dark' : null}>
-                  <span>
-                    done
-                  </span>
-                </Badge>
-
-                <Badge className="mr-2" color={dataset.session.success ? 'success' : null}>
-                  <span>
-                    success
-                  </span>
-                </Badge>
-
-                <Badge className="mr-2" color={dataset.session.cancelRequested ? 'warning' : null}>
-                  <span>
-                    cancelRequested
-                  </span>
-                </Badge>
+                aa
               </td>
               <td>
                 <Badge className="mr-2">

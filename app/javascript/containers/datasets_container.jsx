@@ -22,7 +22,6 @@ class DatasetsContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      datasets: [],
       workflows: [],
       modal: false,
     };
@@ -43,16 +42,6 @@ class DatasetsContainer extends React.Component {
         Authorization: `TD1 ${apiKey}`,
       },
     });
-
-    instance.get('/api/v1/datasets')
-      .then((res) => {
-        const { datasets, sessions } = res.data;
-        const mdatasets = datasets.map((d, index) => ({
-          ...d,
-          session: sessions[index],
-        }));
-        this.setState({ datasets: mdatasets });
-      });
 
     instance.get('/api/v1/datasets/workflows')
       .then((res) => {
@@ -86,16 +75,6 @@ class DatasetsContainer extends React.Component {
     instance.post('/api/v1/datasets', postOptions)
       .then(() => {
         this.setState({ modal: false });
-
-        instance.get('/api/v1/datasets')
-          .then((res) => {
-            const { datasets, sessions } = res.data;
-            const mdatasets = datasets.map((d, index) => ({
-              ...d,
-              session: sessions[index],
-            }));
-            this.setState({ datasets: mdatasets });
-          });
       });
   }
 
@@ -114,7 +93,10 @@ class DatasetsContainer extends React.Component {
   }
 
   render() {
-    const { datasets = [], workflows = [], modal } = this.state;
+    const { datasets } = this.props;
+    const { workflows = [], modal } = this.state;
+
+    const { items = [] } = datasets;
     return (
       <Container>
         <h1 className="my-3">
@@ -125,7 +107,7 @@ class DatasetsContainer extends React.Component {
           Add
         </Button>
 
-        <DatasetsTable datasets={datasets} onFetch={this.handleFetchResult} />
+        <DatasetsTable datasets={items} onFetch={this.handleFetchResult} />
 
         <Modal isOpen={modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>
@@ -146,6 +128,10 @@ class DatasetsContainer extends React.Component {
 
 DatasetsContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  datasets: PropTypes.shape({
+    isFetching: PropTypes.bool,
+    items: PropTypes.array,
+  }).isRequired,
 };
 
 const mapStateToProps = (state) => {
