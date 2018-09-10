@@ -1,0 +1,29 @@
+{
+  "scripts": {
+    "lint": "eslint -c .eslintrc.json ./app/javascript/**/*.jsx",
+    "lint:fix": "eslint -c .eslintrc.json ./app/javascript/**/*.jsx --fix"
+  },
+  "dependencies": {
+    "@rails/webpacker": "3.5",
+    "axios": "^0.18.0",
+    "babel-preset-react": "^6.24.1",
+    "bootstrap": "^4.1.3",
+    "d3": "^5.5.0",
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-loader": "^2.1.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.10.0",
+    "jquery": "^3.3.1",
+    "prop-types": "^15.6.2",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-router-dom": "^4.3.1",
+    "reactstrap": "^6.3.1",
+    "recharts": "^1.1.0"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "2.11.2"
+  }
+}

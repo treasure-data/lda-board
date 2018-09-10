@@ -1,0 +1,28 @@
+version: "3.6"
+
+services:
+  postgresql:
+    image: postgres:10.4-alpine
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD:
+    volumes:
+      - ./tmp/postgresql/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  web:
+    build: .
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/webapp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgresql
+    environment:
+      - TD_CONDOLE=https://console.treasuredata.com
+      - TD_API_SERVER=https://api.treasuredata.com
+      - TD_WORKFLOW_SERVER=https://api-workflow.treasuredata.com
+      - POSTGRES_HOST=postgresql

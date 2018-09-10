@@ -1,0 +1,8 @@
+.git
+.gitignore
+README.md
+.DS_Store
+log
+tmp
+vendor/bundle
+node_modules
