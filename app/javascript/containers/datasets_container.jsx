@@ -16,13 +16,13 @@ import DatasetsTable from '../components/datasets_table';
 import NewDatasetForm from '../components/new_dataset_form';
 import {
   fetchDatasets,
+  fetchWorkflows,
 } from '../actions';
 
 class DatasetsContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      workflows: [],
       modal: false,
     };
 
@@ -35,19 +35,7 @@ class DatasetsContainer extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(fetchDatasets());
-
-    const apiKey = sessionStorage.getItem('apiKey');
-    const instance = axios.create({
-      headers: {
-        Authorization: `TD1 ${apiKey}`,
-      },
-    });
-
-    instance.get('/api/v1/datasets/workflows')
-      .then((res) => {
-        const { workflows } = res.data;
-        this.setState({ workflows });
-      });
+    dispatch(fetchWorkflows());
   }
 
   toggle() {
@@ -93,10 +81,9 @@ class DatasetsContainer extends React.Component {
   }
 
   render() {
-    const { datasets } = this.props;
-    const { workflows = [], modal } = this.state;
+    const { datasets, workflows } = this.props;
+    const { modal } = this.state;
 
-    const { items = [] } = datasets;
     return (
       <Container>
         <h1 className="my-3">
@@ -107,7 +94,7 @@ class DatasetsContainer extends React.Component {
           Add
         </Button>
 
-        <DatasetsTable datasets={items} onFetch={this.handleFetchResult} />
+        <DatasetsTable datasets={datasets.items} onFetch={this.handleFetchResult} />
 
         <Modal isOpen={modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>
@@ -115,7 +102,7 @@ class DatasetsContainer extends React.Component {
           </ModalHeader>
           <ModalBody>
             <NewDatasetForm
-              workflows={workflows}
+              workflows={workflows.items}
               onSubmit={this.handleCreateDataset}
             />
           </ModalBody>
@@ -132,11 +119,15 @@ DatasetsContainer.propTypes = {
     isFetching: PropTypes.bool,
     items: PropTypes.array,
   }).isRequired,
+  workflows: PropTypes.shape({
+    isFetching: PropTypes.bool,
+    items: PropTypes.array,
+  }).isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { datasets } = state;
-  return { datasets };
+  const { datasets, workflows } = state;
+  return { datasets, workflows };
 };
 
 export default connect(mapStateToProps)(DatasetsContainer);
