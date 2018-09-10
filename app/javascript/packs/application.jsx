@@ -8,11 +8,13 @@ import {
   Redirect,
 } from 'react-router-dom';
 import {
+  applyMiddleware,
   createStore,
 } from 'redux';
 import {
   Provider,
 } from 'react-redux';
+import reduxLogger from 'redux-logger';
 
 import DatasetsContainer from '../containers/datasets_container';
 import BoardContainer from '../containers/board_container';
@@ -21,6 +23,7 @@ import rootReducer from '../reducers';
 
 const store = createStore(
   rootReducer,
+  applyMiddleware(reduxLogger),
 );
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
