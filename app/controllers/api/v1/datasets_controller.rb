@@ -1,12 +1,8 @@
 class Api::V1::DatasetsController < ApplicationController
   def index
     @datasets = Dataset.visible_by(current_user).reverse_order
-    @sessions = @datasets.map do |d|
-      get_session_status(session_id: d.session_id)
-    end
     render json: {
       datasets: @datasets,
-      sessions: @sessions,
     }, methods: [:workflow_detail_url_on_td, :session_detail_url_on_td]
   end
 
@@ -46,6 +42,12 @@ class Api::V1::DatasetsController < ApplicationController
       topics: topics,
       predictedTopics: predictedTopics,
     }
+  end
+
+  def status
+    dataset = Dataset.find(params[:dataset_id])
+    session_status = get_session_status(session_id: dataset.session_id)
+    render json: session_status
   end
 
   def fetch
