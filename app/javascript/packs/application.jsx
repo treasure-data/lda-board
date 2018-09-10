@@ -15,6 +15,7 @@ import {
   Provider,
 } from 'react-redux';
 import reduxLogger from 'redux-logger';
+import thunkMiddleware from 'redux-thunk';
 
 import DatasetsContainer from '../containers/datasets_container';
 import BoardContainer from '../containers/board_container';
@@ -23,7 +24,7 @@ import rootReducer from '../reducers';
 
 const store = createStore(
   rootReducer,
-  applyMiddleware(reduxLogger),
+  applyMiddleware(thunkMiddleware, reduxLogger),
 );
 
 const PrivateRoute = ({ component: Component, ...rest }) => (

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   connect,
 } from 'react-redux';
@@ -13,6 +14,9 @@ import axios from 'axios';
 
 import DatasetsTable from '../components/datasets_table';
 import NewDatasetForm from '../components/new_dataset_form';
+import {
+  fetchDatasets,
+} from '../actions';
 
 class DatasetsContainer extends React.Component {
   constructor(props) {
@@ -30,6 +34,9 @@ class DatasetsContainer extends React.Component {
   }
 
   componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(fetchDatasets());
+
     const apiKey = sessionStorage.getItem('apiKey');
     const instance = axios.create({
       headers: {
@@ -136,6 +143,10 @@ class DatasetsContainer extends React.Component {
     );
   }
 }
+
+DatasetsContainer.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = (state) => {
   const { datasets } = state;
