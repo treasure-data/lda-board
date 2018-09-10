@@ -7,10 +7,21 @@ import {
   Route,
   Redirect,
 } from 'react-router-dom';
+import {
+  createStore,
+} from 'redux';
+import {
+  Provider,
+} from 'react-redux';
 
 import DatasetsContainer from '../containers/datasets_container';
 import BoardContainer from '../containers/board_container';
 import SignInContainer from '../containers/sign_in_container';
+import rootReducer from '../reducers';
+
+const store = createStore(
+  rootReducer,
+);
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
@@ -45,7 +56,9 @@ const AppRoot = () => (
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <AppRoot />,
+    <Provider store={store}>
+      <AppRoot />
+    </Provider>,
     document.body.appendChild(document.createElement('div')),
   );
 });

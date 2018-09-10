@@ -1,5 +1,8 @@
 import React from 'react';
 import {
+  connect,
+} from 'react-redux';
+import {
   Container,
   Button,
   Modal,
@@ -134,4 +137,9 @@ class DatasetsContainer extends React.Component {
   }
 }
 
-export default DatasetsContainer;
+const mapStateToProps = (state) => {
+  const { datasets } = state;
+  return { datasets };
+};
+
+export default connect(mapStateToProps)(DatasetsContainer);
