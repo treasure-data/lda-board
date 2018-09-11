@@ -8,9 +8,10 @@ const requestDatasetStatus = () => ({
   type: REQUEST_DATASET_STATUS,
 });
 
-const receiveDatasetStatus = json => ({
+const receiveDatasetStatus = (datasetId, datasetStatus) => ({
   type: RECEIVE_DATASET_STATUS,
-  datasetDetail: json.data,
+  datasetId,
+  datasetStatus,
 });
 
 export const fetchDatasetStatus = datasetId => (
@@ -25,7 +26,7 @@ export const fetchDatasetStatus = datasetId => (
         },
       },
     )
-      .then(res => dispatch(receiveDatasetStatus(res.data)));
+      .then(res => dispatch(receiveDatasetStatus(datasetId, res.data)));
   }
 );
 
@@ -56,7 +57,6 @@ export const fetchDatasets = () => (
     )
       .then((res) => {
         dispatch(receiveDatasets(res.data));
-        console.log({ res });
         res.data.datasets.map(d => dispatch(fetchDatasetStatus(d.id)));
       });
   }
