@@ -34,8 +34,12 @@ const DatasetsTable = (props) => {
             wf status
           </th>
           <th>
-            fetch status
+            created_at
           </th>
+          <th>
+            last_fetched_at
+          </th>
+          <th />
           <th />
         </tr>
       </thead>
@@ -69,13 +73,27 @@ const DatasetsTable = (props) => {
                 />
               </td>
               <td>
-                <Button color="secondary" size="sm" onClick={() => onFetch(dataset.id)}>
+                <small>
+                  {dataset.created_at}
+                </small>
+              </td>
+              <td>
+                <small>
+                  {
+                    (dataset.created_at === dataset.updated_at)
+                      ? '-'
+                      : `${dataset.updated_at}`
+                  }
+                </small>
+              </td>
+              <td>
+                <Button color="secondary" outline size="sm" onClick={() => onFetch(dataset.id)}>
                   Fetch from TD
                 </Button>
               </td>
               <td>
                 <Link to={`/boards/${dataset.id}`}>
-                  <Button color="primary" size="sm">
+                  <Button color="primary" size="sm" disabled={dataset.created_at === dataset.updated_at}>
                     Visualize
                   </Button>
                 </Link>
