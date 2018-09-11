@@ -208,7 +208,7 @@ class BoardContainer extends React.Component {
       predictedTopics,
     } = this.state;
 
-    const targetTopicIds = ldaModel.map(l => l.some(x => (x.word === targetTerm)));
+    const targetTopicIds = ldaModel.map(l => l.some(x => (x.word.match(targetTerm))));
 
     const visibleTopics = (targetTerm === undefined)
       ? topics.map(t => ({ ...t, visible: true }))

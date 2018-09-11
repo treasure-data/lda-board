@@ -79,7 +79,7 @@ class Api::V1::DatasetsController < ApplicationController
       )
     end
 
-    lda_models.each_slice(5000) do |lda_models_sub|
+    lda_models.each_slice(10000) do |lda_models_sub|
       dataset.lda_models.import(lda_models_sub)
     end
 
@@ -116,9 +116,12 @@ class Api::V1::DatasetsController < ApplicationController
       )
     end
 
-    predicted_topics.each_slice(5000) do |predicted_topics_sub|
+    predicted_topics.each_slice(10000) do |predicted_topics_sub|
       dataset.predicted_topics.import(predicted_topics_sub)
     end
+
+    dataset.touch
+    dataset.save
 
     render json: { status: 'success' }
   end
