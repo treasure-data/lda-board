@@ -46,6 +46,7 @@ class DatasetsContainer extends React.Component {
   }
 
   handleCreateDataset(options) {
+    const { dispatch } = this.props;
     const apiKey = sessionStorage.getItem('apiKey');
     const instance = axios.create({
       headers: {
@@ -63,6 +64,7 @@ class DatasetsContainer extends React.Component {
     instance.post('/api/v1/datasets', postOptions)
       .then(() => {
         this.setState({ modal: false });
+        dispatch(fetchDatasets());
       });
   }
 
