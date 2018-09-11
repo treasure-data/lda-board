@@ -107,7 +107,7 @@ class DatasetsContainer extends React.Component {
           </ModalHeader>
           <ModalBody>
             <NewDatasetForm
-              workflows={workflows.items}
+              workflows={workflows}
               onSubmit={this.handleCreateDataset}
             />
           </ModalBody>
