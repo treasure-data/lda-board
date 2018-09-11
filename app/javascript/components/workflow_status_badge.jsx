@@ -16,7 +16,7 @@ const createBadgeContent = (status, isFetching) => {
   if (status.cancelRequested === true) {
     return {
       color: 'warning',
-      text: 'cancelRequested',
+      text: 'canceled',
     };
   }
 
