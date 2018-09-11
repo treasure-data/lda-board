@@ -1,11 +1,12 @@
 import React from 'react';
 import {
   Table,
-  Badge,
   Button,
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
+import WorkFlowStatusBadge from './workflow_status_badge';
 
 const tableKeys = ['id'];
 
@@ -62,12 +63,12 @@ const DatasetsTable = (props) => {
                 </a>
               </td>
               <td>
-                TBD
+                <WorkFlowStatusBadge
+                  status={dataset.status || {}}
+                  isFetching={dataset.isFetching === undefined ? true : dataset.isFetching}
+                />
               </td>
               <td>
-                <Badge className="mr-2">
-                  status
-                </Badge>
                 <Button color="secondary" size="sm" onClick={() => onFetch(dataset.id)}>
                   Fetch from TD
                 </Button>
