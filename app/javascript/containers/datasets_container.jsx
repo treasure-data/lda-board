@@ -1,4 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import {
+  connect,
+} from 'react-redux';
 import {
   Container,
   Button,
@@ -10,13 +14,15 @@ import axios from 'axios';
 
 import DatasetsTable from '../components/datasets_table';
 import NewDatasetForm from '../components/new_dataset_form';
+import {
+  fetchDatasets,
+  fetchWorkflows,
+} from '../actions';
 
 class DatasetsContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      datasets: [],
-      workflows: [],
       modal: false,
     };
 
@@ -27,28 +33,9 @@ class DatasetsContainer extends React.Component {
   }
 
   componentDidMount() {
-    const apiKey = sessionStorage.getItem('apiKey');
-    const instance = axios.create({
-      headers: {
-        Authorization: `TD1 ${apiKey}`,
-      },
-    });
-
-    instance.get('/api/v1/datasets')
-      .then((res) => {
-        const { datasets, sessions } = res.data;
-        const mdatasets = datasets.map((d, index) => ({
-          ...d,
-          session: sessions[index],
-        }));
-        this.setState({ datasets: mdatasets });
-      });
-
-    instance.get('/api/v1/datasets/workflows')
-      .then((res) => {
-        const { workflows } = res.data;
-        this.setState({ workflows });
-      });
+    const { dispatch } = this.props;
+    dispatch(fetchDatasets());
+    dispatch(fetchWorkflows());
   }
 
   toggle() {
@@ -59,6 +46,7 @@ class DatasetsContainer extends React.Component {
   }
 
   handleCreateDataset(options) {
+    const { dispatch } = this.props;
     const apiKey = sessionStorage.getItem('apiKey');
     const instance = axios.create({
       headers: {
@@ -76,16 +64,7 @@ class DatasetsContainer extends React.Component {
     instance.post('/api/v1/datasets', postOptions)
       .then(() => {
         this.setState({ modal: false });
-
-        instance.get('/api/v1/datasets')
-          .then((res) => {
-            const { datasets, sessions } = res.data;
-            const mdatasets = datasets.map((d, index) => ({
-              ...d,
-              session: sessions[index],
-            }));
-            this.setState({ datasets: mdatasets });
-          });
+        dispatch(fetchDatasets());
       });
   }
 
@@ -104,7 +83,9 @@ class DatasetsContainer extends React.Component {
   }
 
   render() {
-    const { datasets = [], workflows = [], modal } = this.state;
+    const { datasets, workflows } = this.props;
+    const { modal } = this.state;
+
     return (
       <Container>
         <h1 className="my-3">
@@ -115,7 +96,7 @@ class DatasetsContainer extends React.Component {
           Add
         </Button>
 
-        <DatasetsTable datasets={datasets} onFetch={this.handleFetchResult} />
+        <DatasetsTable datasets={datasets.items} onFetch={this.handleFetchResult} />
 
         <Modal isOpen={modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>
@@ -123,7 +104,7 @@ class DatasetsContainer extends React.Component {
           </ModalHeader>
           <ModalBody>
             <NewDatasetForm
-              workflows={workflows}
+              workflows={workflows.items}
               onSubmit={this.handleCreateDataset}
             />
           </ModalBody>
@@ -134,4 +115,21 @@ class DatasetsContainer extends React.Component {
   }
 }
 
-export default DatasetsContainer;
+DatasetsContainer.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  datasets: PropTypes.shape({
+    isFetching: PropTypes.bool,
+    items: PropTypes.array,
+  }).isRequired,
+  workflows: PropTypes.shape({
+    isFetching: PropTypes.bool,
+    items: PropTypes.array,
+  }).isRequired,
+};
+
+const mapStateToProps = (state) => {
+  const { datasets, workflows } = state;
+  return { datasets, workflows };
+};
+
+export default connect(mapStateToProps)(DatasetsContainer);

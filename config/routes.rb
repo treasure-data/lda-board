@@ -8,6 +8,7 @@ Rails.application.routes.draw do
           get :workflows
         end
         get '/fetch', to: 'datasets#fetch'
+        get '/status', to: 'datasets#status'
       end
     end
   end
