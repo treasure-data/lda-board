@@ -120,6 +120,9 @@ class Api::V1::DatasetsController < ApplicationController
       dataset.predicted_topics.import(predicted_topics_sub)
     end
 
+    dataset.touch
+    dataset.save
+
     render json: { status: 'success' }
   end
 
