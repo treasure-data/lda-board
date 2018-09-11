@@ -5,6 +5,7 @@ import {
   Button,
   FormGroup,
   Label,
+  Alert,
 } from 'reactstrap';
 
 
@@ -15,7 +16,7 @@ class NewDatasetForm extends React.Component {
     this.state = {
       workflowId: undefined,
       params: {
-        sessionNumberOfTopics: undefined,
+        sessionNumberOfTopics: 10,
       },
     };
 
@@ -45,13 +46,22 @@ class NewDatasetForm extends React.Component {
 
   render() {
     const { workflows } = this.props;
-    const { workflowId, sessionNumberOfTopics } = this.state;
+    const { workflowId, params } = this.state;
+    const { sessionNumberOfTopics } = params;
 
-    const currentWorkflow = workflows.find(w => w.id === workflowId) || {};
+    const currentWorkflow = workflows.items.find(w => w.id === workflowId) || {};
     const currentConfig = 'config' in currentWorkflow ? currentWorkflow.config : {};
     /* eslint-disable */
     const currentExport = '_export' in currentConfig ? currentConfig['_export'] : {};
     /* eslint-enable */
+
+    if (workflows.isFetching) {
+      return (
+        <Alert color="primary">
+          loading...
+        </Alert>
+      );
+    }
 
     return (
       <div>
@@ -61,7 +71,7 @@ class NewDatasetForm extends React.Component {
           </Label>
           <Input type="select" value={workflowId} onChange={this.handleWorkflowIdChange}>
             {
-              workflows.map((workflow) => {
+              workflows.items.map((workflow) => {
                 const { id, name, project } = workflow;
                 const projectName = project.name;
                 return (
@@ -98,11 +108,14 @@ class NewDatasetForm extends React.Component {
 }
 
 NewDatasetForm.propTypes = {
-  workflows: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
+  workflows: PropTypes.shape({
+    isFetching: PropTypes.bool,
+    items: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+      }),
+    ),
+  }).isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
 

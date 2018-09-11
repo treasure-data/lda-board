@@ -3,7 +3,6 @@ import {
   Container,
   Row,
   Col,
-  Table,
   Card,
   CardBody,
   CardTitle,
@@ -14,143 +13,11 @@ import {
   Link,
 } from 'react-router-dom';
 import axios from 'axios';
-import PropTypes from 'prop-types';
 
 import BubbleChart from '../components/bubble_chart';
 import FilterTopicsForm from '../components/filter_topics_form';
-
-const Term = (props) => {
-  const { term } = props;
-  const {
-    id, word, lambda,
-  } = term;
-  return (
-    <tr key={id}>
-      <td>
-        {word}
-      </td>
-      <td>
-        {lambda}
-      </td>
-    </tr>
-  );
-};
-
-Term.propTypes = {
-  term: PropTypes.shape({
-    label: PropTypes.number.isRequired,
-  }).isRequired,
-};
-
-const TopicTerms = (props) => {
-  const { topicTerms, targetTopic } = props;
-
-  if (targetTopic === -1) {
-    return (
-      <div>
-        not selected
-      </div>
-    );
-  }
-
-  return (
-    <Table size="sm" hover>
-      <thead>
-        <tr>
-          <th>
-            Term
-          </th>
-          <th>
-            Probability
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          topicTerms.map(terms => (
-            terms.slice(0, 15).map(term => (
-              (term.label === targetTopic)
-                ? <Term key={term.id} term={term} />
-                : null
-            ))
-          ))
-        }
-      </tbody>
-    </Table>
-  );
-};
-
-TopicTerms.propTypes = {
-  topicTerms: PropTypes.arrayOf(
-    PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-      }),
-    ),
-  ).isRequired,
-  targetTopic: PropTypes.number.isRequired,
-};
-
-const TopicDocs = (props) => {
-  const { topicDocs, targetTopic } = props;
-
-  if (targetTopic === -1) {
-    return (
-      <div>
-        not selected
-      </div>
-    );
-  }
-
-  const docs = topicDocs[targetTopic] || [];
-
-  return (
-    <Table size="sm" hover>
-      <thead>
-        <tr>
-          <th>
-            ID
-          </th>
-          <th>
-            Probability
-          </th>
-          <th>
-            Content
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          docs.slice(0, 15).map((doc) => {
-            const { docid, proba1 } = doc;
-            return (
-              <tr key={docid}>
-                <td>
-                  {docid}
-                </td>
-                <td>
-                  {proba1}
-                </td>
-              </tr>
-            );
-          })
-        }
-      </tbody>
-    </Table>
-  );
-};
-
-TopicDocs.propTypes = {
-  topicDocs: PropTypes.arrayOf(
-    PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-      }),
-    ),
-  ).isRequired,
-  targetTopic: PropTypes.number.isRequired,
-};
-
+import TopicElementsTable from '../components/topic_elements_table';
+import TopTermsTable from '../components/top_terms_table';
 
 class BoardContainer extends React.Component {
   constructor(props) {
@@ -241,8 +108,8 @@ class BoardContainer extends React.Component {
         </Row>
 
         <Row className="my-4">
-          <Col>
-            <Card>
+          <Col sm="8">
+            <Card className="mb-4">
               <CardBody>
                 <span className="pr-3">
                   {'Selected Topic: '}
@@ -275,27 +142,7 @@ class BoardContainer extends React.Component {
                 />
               </CardBody>
             </Card>
-          </Col>
-          <Col sm="4">
-            <Card body className="mb-4">
-              <FilterTopicsForm onSubmit={this.handleChangeTargetTerm} />
-            </Card>
 
-            <Card>
-              <CardBody>
-                <CardTitle className="m-0">
-                  Top terms
-                </CardTitle>
-              </CardBody>
-              <CardBody className="py-0">
-                <TopicTerms topicTerms={ldaModel} targetTopic={targetTopic} />
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row className="my-4">
-          <Col>
             <Card>
               <CardBody>
                 <CardTitle className="m-0">
@@ -303,12 +150,27 @@ class BoardContainer extends React.Component {
                 </CardTitle>
               </CardBody>
               <CardBody className="py-0">
-                <TopicDocs topicDocs={predictedTopics} targetTopic={targetTopic} />
+                <TopicElementsTable docments={predictedTopics[targetTopic] || []} />
               </CardBody>
             </Card>
           </Col>
 
           <Col sm="4">
+            <Card body className="mb-4">
+              <FilterTopicsForm onSubmit={this.handleChangeTargetTerm} />
+            </Card>
+
+            <Card className="mb-4">
+              <CardBody>
+                <CardTitle className="m-0">
+                  Top terms
+                </CardTitle>
+              </CardBody>
+              <CardBody className="py-0">
+                <TopTermsTable terms={ldaModel[targetTopic] || []} />
+              </CardBody>
+            </Card>
+
             <Card body>
               <p>
                 debug info
