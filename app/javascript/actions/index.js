@@ -1,5 +1,16 @@
 import axios from 'axios';
 
+const apiGetClient = endpoint => (
+  axios.get(
+    endpoint,
+    {
+      headers: {
+        Authorization: `TD1 ${sessionStorage.getItem('apiKey')}`,
+      },
+    },
+  )
+);
+
 // Dataset Status
 export const REQUEST_DATASET_STATUS = 'REQUEST_DATASET_STATUS';
 export const RECEIVE_DATASET_STATUS = 'RECEIVE_DATASET_STATUS';
@@ -17,15 +28,7 @@ const receiveDatasetStatus = (datasetId, datasetStatus) => ({
 export const fetchDatasetStatus = datasetId => (
   (dispatch) => {
     dispatch(requestDatasetStatus());
-
-    return axios.get(
-      `/api/v1/datasets/${datasetId}/status`,
-      {
-        headers: {
-          Authorization: `TD1 ${sessionStorage.getItem('apiKey')}`,
-        },
-      },
-    )
+    return apiGetClient(`/api/v1/datasets/${datasetId}/status`)
       .then(res => dispatch(receiveDatasetStatus(datasetId, res.data)));
   }
 );
@@ -46,15 +49,7 @@ const receiveDatasets = json => ({
 export const fetchDatasets = () => (
   (dispatch) => {
     dispatch(requestDatasets());
-
-    return axios.get(
-      '/api/v1/datasets',
-      {
-        headers: {
-          Authorization: `TD1 ${sessionStorage.getItem('apiKey')}`,
-        },
-      },
-    )
+    return apiGetClient('/api/v1/datasets')
       .then((res) => {
         dispatch(receiveDatasets(res.data));
         res.data.datasets.map(d => dispatch(fetchDatasetStatus(d.id)));
@@ -79,14 +74,7 @@ export const fetchWorkflows = () => (
   (dispatch) => {
     dispatch(requestWorkflows());
 
-    return axios.get(
-      '/api/v1/datasets/workflows',
-      {
-        headers: {
-          Authorization: `TD1 ${sessionStorage.getItem('apiKey')}`,
-        },
-      },
-    )
+    return apiGetClient('/api/v1/datasets/workflows')
       .then(res => dispatch(receiveWorkflows(res.data)));
   }
 );
