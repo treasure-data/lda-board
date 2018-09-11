@@ -58,10 +58,10 @@ const TopicTerms = (props) => {
       <thead>
         <tr>
           <th>
-            term
+            Term
           </th>
           <th>
-            lambda
+            Probability
           </th>
         </tr>
       </thead>
@@ -109,10 +109,13 @@ const TopicDocs = (props) => {
       <thead>
         <tr>
           <th>
-            id
+            ID
           </th>
           <th>
-            probability
+            Probability
+          </th>
+          <th>
+            Content
           </th>
         </tr>
       </thead>
@@ -281,7 +284,7 @@ class BoardContainer extends React.Component {
             <Card>
               <CardBody>
                 <CardTitle className="m-0">
-                  Topic Term dists
+                  Top terms
                 </CardTitle>
               </CardBody>
               <CardBody className="py-0">
@@ -296,7 +299,7 @@ class BoardContainer extends React.Component {
             <Card>
               <CardBody>
                 <CardTitle className="m-0">
-                  Topic Doc dists
+                  Topic elements
                 </CardTitle>
               </CardBody>
               <CardBody className="py-0">
@@ -305,7 +308,7 @@ class BoardContainer extends React.Component {
             </Card>
           </Col>
 
-          <Col>
+          <Col sm="4">
             <Card body>
               <p>
                 debug info
