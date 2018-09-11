@@ -35,11 +35,14 @@ class DatasetsContainer extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(fetchDatasets());
-    dispatch(fetchWorkflows());
   }
 
   toggle() {
+    const { dispatch } = this.props;
     const { modal } = this.state;
+    if (!modal) {
+      dispatch(fetchWorkflows());
+    }
     this.setState({
       modal: !modal,
     });
