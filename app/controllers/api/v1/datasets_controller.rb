@@ -26,7 +26,7 @@ class Api::V1::DatasetsController < ApplicationController
       .where(dataset_id: params[:id])
       .order(:label, {lambda: 'desc'})
       .group_by {|item| item.label }
-      .map { |k, v| v.first(20) }
+      .map { |k, v| v }
 
     topics = Topic.where(dataset_id: params[:id])
 
@@ -35,7 +35,7 @@ class Api::V1::DatasetsController < ApplicationController
       .where(dataset_id: params[:id])
       .order(:topic1, {proba1: 'desc'})
       .group_by {|item| item.topic1 }
-      .map { |k, v| v.first(20) }
+      .map { |k, v| v }
 
     render json: {
       ldaModel: ldaModel,
