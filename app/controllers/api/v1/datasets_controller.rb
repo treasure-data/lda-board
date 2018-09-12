@@ -52,9 +52,9 @@ class Api::V1::DatasetsController < ApplicationController
 
   def fetch
     dataset = Dataset.find(params[:dataset_id])
+
     client = TreasureData::Client.new(current_user.td_api_key, {
-      endpoint: ENV["TD_API_SERVER"],
-      type: :presto
+      endpoint: ENV["TD_API_SERVER"]
     })
 
     tasks = get_tasks(attempt_id: dataset.attempt_id)
@@ -62,7 +62,27 @@ class Api::V1::DatasetsController < ApplicationController
     dbname = parentTask.first['config']['_export']['dbname']
 
     # fetch lda_model
-    job = client.query(dbname, "select label, word, lambda from #{dataset.session_id}_lda_model")
+    query = <<-EOS
+    WITH ranked as (
+      SELECT
+        label,
+        word,
+        lambda,
+        ROW_NUMBER() over (partition by label order by lambda desc) as rnk
+      FROM 
+        \"#{dataset.session_id}_lda_model\"
+    )
+    SELECT
+      label, word, lambda
+    FROM
+      ranked
+    WHERE
+      rnk <= 20
+    ORDER BY
+      label, lambda DESC
+    EOS
+
+    job = client.query(dbname, query, nil, nil, nil, {type: :presto})
     until job.finished?
       sleep 2
       job.update_progress!
@@ -79,12 +99,20 @@ class Api::V1::DatasetsController < ApplicationController
       )
     end
 
-    lda_models.each_slice(10000) do |lda_models_sub|
-      dataset.lda_models.import(lda_models_sub)
-    end
+    dataset.lda_models.import(lda_models)
 
     # fetch principal_component
-    job = client.query(dbname, "SELECT index, x, y, proportion FROM #{dataset.session_id}_principal_component join #{dataset.session_id}_topic_proportion on (#{dataset.session_id}_principal_component.index = #{dataset.session_id}_topic_proportion.topic)")
+    query = <<-EOS
+    SELECT
+      index, x, y, proportion
+    FROM
+      \"#{dataset.session_id}_principal_component\"
+      join
+      \"#{dataset.session_id}_topic_proportion\"
+      on
+      (\"#{dataset.session_id}_principal_component\".index = \"#{dataset.session_id}_topic_proportion\".topic)
+    EOS
+    job = client.query(dbname, query, nil, nil, nil, {type: :presto})
     until job.finished?
       sleep 2
       job.update_progress!
@@ -100,7 +128,27 @@ class Api::V1::DatasetsController < ApplicationController
     dataset.topics.import(topics)
 
     # fetch predicted_topics
-    job = client.query(dbname, "SELECT docid, topic1, proba1 FROM #{dataset.session_id}_predicted_topics")
+    query = <<-EOS
+    WITH ranked as (
+      SELECT
+        topic1 as topicid,
+        docid,
+        proba1 as proba, 
+        ROW_NUMBER() over (partition by topic1 order by proba1 desc) as rnk
+      FROM 
+        \"#{dataset.session_id}_predicted_topics\"
+    )
+    SELECT
+      topicid, docid, proba
+    FROM
+      ranked
+    WHERE
+      rnk <= 20
+    ORDER BY
+      topicid, proba DESC
+    EOS
+    job = client.query(dbname, query, nil, nil, nil, {type: :presto})
+
     until job.finished?
       sleep 2
       job.update_progress!
@@ -110,15 +158,13 @@ class Api::V1::DatasetsController < ApplicationController
     predicted_topics = []
     job.result_each do |row|
       predicted_topics << dataset.predicted_topics.new(
-        docid: row[0],
-        topic1: row[1],
+        docid: row[1],
+        topic1: row[0],
         proba1: row[2],
       )
     end
 
-    predicted_topics.each_slice(10000) do |predicted_topics_sub|
-      dataset.predicted_topics.import(predicted_topics_sub)
-    end
+    dataset.predicted_topics.import(predicted_topics)
 
     dataset.touch
     dataset.save
@@ -183,7 +229,6 @@ class Api::V1::DatasetsController < ApplicationController
         req.headers['Authorization'] = "TD1 #{current_user.td_api_key}"
         req.headers['Content-Type'] = 'application/json'
       end
-
       JSON.parse(res.body)['lastAttempt'] || {}
     end
   end
