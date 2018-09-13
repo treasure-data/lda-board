@@ -34,6 +34,9 @@ const DatasetsTable = (props) => {
             wf status
           </th>
           <th>
+            fetch status
+          </th>
+          <th>
             created_at
           </th>
           <th>
@@ -73,6 +76,9 @@ const DatasetsTable = (props) => {
                 />
               </td>
               <td>
+                {dataset.fetch_status}
+              </td>
+              <td>
                 <small>
                   {dataset.created_at}
                 </small>
@@ -87,7 +93,7 @@ const DatasetsTable = (props) => {
                 </small>
               </td>
               <td>
-                <Button color="secondary" outline size="sm" onClick={() => onFetch(dataset.id)}>
+                <Button color="secondary" outline size="sm" disabled={dataset.fetch_status === 'working'} onClick={() => onFetch(dataset.id)}>
                   Fetch from TD
                 </Button>
               </td>

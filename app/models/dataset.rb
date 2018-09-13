@@ -16,4 +16,8 @@ class Dataset < ApplicationRecord
     td_console_base = ENV["TD_CONSOLE"]
     "#{td_console_base}/app/workflows/#{self.workflow_id}/sessions/#{self.session_id}"
   end
+
+  def fetch_status
+    Rails.cache.read("/datasets/#{self.id}/fetch_status")
+  end
 end

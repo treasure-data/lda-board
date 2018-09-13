@@ -1,5 +1,5 @@
 # Database
-dbname: ap_docs
+dbname: lda_web_access
 
 # input table
 source: docs
