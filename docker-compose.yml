@@ -14,7 +14,7 @@ services:
 
   web:
     build: .
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    command: sh -c "bundle exec rails assets:precompile && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
       - .:/webapp
     ports:
@@ -25,4 +25,4 @@ services:
       - TD_CONDOLE=https://console.treasuredata.com
       - TD_API_SERVER=https://api.treasuredata.com
       - TD_WORKFLOW_SERVER=https://api-workflow.treasuredata.com
-      - POSTGRES_HOST=postgresql
+      - LDA_BOARD_DATABASE_HOST=postgresql
