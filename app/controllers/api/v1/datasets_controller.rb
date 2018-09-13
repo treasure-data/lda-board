@@ -107,7 +107,7 @@ class Api::V1::DatasetsController < ApplicationController
   def get_session_status(session_id:)
     url = "#{ENV["TD_WORKFLOW_SERVER"]}/api/sessions/#{session_id}"
 
-     Rails.cache.fetch(url, expires_in: 10.minutes) do
+     Rails.cache.fetch(url, expires_in: 1.minutes) do
       conn = Faraday.new
       res = conn.get url do |req|
         req.headers['Authorization'] = "TD1 #{current_user.td_api_key}"
