@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_10_040048) do
+ActiveRecord::Schema.define(version: 2018_09_13_064956) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 2018_09_10_040048) do
     t.string "docid"
     t.integer "topic1"
     t.decimal "proba1", precision: 9, scale: 6
+    t.jsonb "contents"
     t.index ["dataset_id"], name: "index_predicted_topics_on_dataset_id"
   end
 
