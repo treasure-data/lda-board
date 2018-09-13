@@ -36,11 +36,11 @@ class DatasetsContainer extends React.Component {
     const { dispatch } = this.props;
     dispatch(fetchDatasets());
 
-    setInterval(() => { dispatch(fetchDatasets()); }, 20000);
+    this.pollingMethod = setInterval(() => { dispatch(fetchDatasets()); }, 20000);
   }
 
   componentWillUnmount() {
-    clearInterval();
+    clearInterval(this.pollingMethod);
   }
 
   toggle() {
@@ -78,6 +78,7 @@ class DatasetsContainer extends React.Component {
   }
 
   handleFetchResult(datasetId) {
+    const { dispatch } = this.props;
     const apiKey = sessionStorage.getItem('apiKey');
     const instance = axios.create({
       headers: {
@@ -88,6 +89,7 @@ class DatasetsContainer extends React.Component {
     instance.get(`/api/v1/datasets/${datasetId}/fetch`)
       .then(() => {
         this.setState();
+        dispatch(fetchDatasets());
       });
   }
 

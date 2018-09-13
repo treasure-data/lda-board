@@ -36,7 +36,7 @@ const TopicElementsTable = (props) => {
                   {proba1}
                 </td>
                 <td>
-                  {contents}
+                  {JSON.stringify(contents, undefined, 1)}
                 </td>
               </tr>
             );
