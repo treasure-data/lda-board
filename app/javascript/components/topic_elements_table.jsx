@@ -26,7 +26,7 @@ const TopicElementsTable = (props) => {
       <tbody>
         {
           docments.map((doc) => {
-            const { docid, proba1 } = doc;
+            const { docid, proba1, contents } = doc;
             return (
               <tr key={docid}>
                 <td>
@@ -35,7 +35,9 @@ const TopicElementsTable = (props) => {
                 <td>
                   {proba1}
                 </td>
-                <td />
+                <td>
+                  {contents}
+                </td>
               </tr>
             );
           })
