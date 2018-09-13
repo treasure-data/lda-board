@@ -33,14 +33,20 @@ tfidf AS (
     JOIN df ON (tf.word = df.word)
   where
     df.docs >= 2
+),
+collected as (
+  select
+    docid,
+    collect_list(feature(translate(word,':','\;'),tfidf)) as features
+  from
+    tfidf
+  group by
+    docid
+  CLUSTER by rand(43) -- random shuffling
 )
 -- DIGDAG_INSERT_LINE
 select
-  docid,
-  collect_list(feature(translate(word,':','\;'),tfidf)) as features
+  collected.docid, collected.features, docs.contents
 from
-  tfidf
-group by
-  docid
-CLUSTER by rand(43) -- random shuffling
+  collected join docs on (collected.docid = docs.docid)
 ;

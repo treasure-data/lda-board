@@ -3,7 +3,8 @@ WITH exploded as (
   select
     l.docid, 
     extract_feature(feature) as word, 
-    extract_weight(feature) as value
+    extract_weight(feature) as value,
+    l.contents
   from
     input l
     LATERAL VIEW explode(features) r as feature
@@ -11,18 +12,20 @@ WITH exploded as (
 predicted as (
   select
     t.docid,
+    t.contents,
     lda_predict(t.word, t.value, m.label, m.lambda, '-topics ${num_topics}') as probabilities
   from
     exploded t
     JOIN lda_model m ON (t.word = m.word)
   group by
-    t.docid
+    t.docid, t.contents
 )
 -- DIGDAG_INSERT_LINE
 select 
   docid, 
   probabilities[0].label as topic1, probabilities[0].probability as proba1,
-  probabilities[1].label as topic2, probabilities[1].probability as proba2
+  probabilities[1].label as topic2, probabilities[1].probability as proba2,
+  contents
 from
   predicted
 ;
