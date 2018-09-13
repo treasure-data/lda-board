@@ -16,7 +16,7 @@ class NewDatasetForm extends React.Component {
     this.state = {
       workflowId: undefined,
       params: {
-        sessionNumberOfTopics: 10,
+        sessionNumberOfTopics: undefined,
       },
     };
 
@@ -26,9 +26,8 @@ class NewDatasetForm extends React.Component {
   }
 
   handleWorkflowIdChange(event) {
-    this.setState({
-      workflowId: event.target.value,
-    });
+    const workflowId = event.target.value;
+    this.setState({ workflowId });
   }
 
   handleSessionNumberOfTopicsChange(event) {
@@ -40,8 +39,26 @@ class NewDatasetForm extends React.Component {
   }
 
   handleSubmit() {
+    const { workflows } = this.props;
+    const { workflowId, params } = this.state;
+    const { sessionNumberOfTopics } = params;
+    const currentWorkflow = workflows.items.find(w => w.id === workflowId) || {};
+    const currentConfig = 'config' in currentWorkflow ? currentWorkflow.config : {};
+    /* eslint-disable */
+    const currentExport = '_export' in currentConfig ? currentConfig['_export'] : {};
+    /* eslint-enable */
+
+    const defaultNumTopics = currentExport.default_num_topics;
+    const nextNumTopics = (defaultNumTopics !== undefined && sessionNumberOfTopics === undefined)
+      ? defaultNumTopics : undefined;
+
     const { onSubmit } = this.props;
-    onSubmit(this.state);
+    onSubmit({
+      workflowId,
+      params: {
+        sessionNumberOfTopics: nextNumTopics,
+      },
+    });
   }
 
   render() {
@@ -58,7 +75,7 @@ class NewDatasetForm extends React.Component {
     if (workflows.isFetching) {
       return (
         <Alert color="primary">
-          loading...
+          Loading workflows...
         </Alert>
       );
     }
@@ -88,7 +105,9 @@ class NewDatasetForm extends React.Component {
 
         <FormGroup>
           <Label>
-            number of topics
+            number of topics (default:
+            {currentExport.default_num_topics}
+            )
           </Label>
           <Input type="number" value={sessionNumberOfTopics} onChange={this.handleSessionNumberOfTopicsChange} />
         </FormGroup>

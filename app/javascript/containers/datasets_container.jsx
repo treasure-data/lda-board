@@ -35,6 +35,12 @@ class DatasetsContainer extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(fetchDatasets());
+
+    setInterval(() => { dispatch(fetchDatasets()); }, 900000);
+  }
+
+  componentWillUnmount() {
+    clearInterval();
   }
 
   toggle() {
