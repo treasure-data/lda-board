@@ -59,11 +59,16 @@ _export:
   _parallel: true
 
   +dimension_reduction:
-    py>: tasks.DimensionReduction.jspca
-    docker:
-      image: "python:3.6.5"
-    _env:
-      python_apikey: ${secret:python_apikey}
+    +prepare_pca_input:
+      td>: queries/pca_input.sql
+      create_table: pca_input
+
+    +run_pca:
+      py>: tasks.DimensionReduction.jspca
+      docker:
+        image: "python:3.6.5"
+      _env:
+        python_apikey: ${secret:python_apikey}
 
   +topic_proportion:
     td>: queries/topic_proportion.sql

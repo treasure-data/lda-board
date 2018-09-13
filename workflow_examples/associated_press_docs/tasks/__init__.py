@@ -33,17 +33,15 @@ class DimensionReduction(object):
     )
 
     df = pandas_td.read_td(
-      'select label, lambda from lda_model',
+      'select label, lambda from pca_input order by label asc',
       engine
     )
 
     pca = PCA(n_components=2, random_state=0)
 
     dist = []
-    for _, group in df.groupby('label'):
-      dist.append(list(group['lambda'][:1000]))
-
-    print(dist)
+    for index, row in df.iterrows():
+      dist.append([0 if v is None else v for v in row['lambda'][2:]])
 
     dist_matrix = squareform(pdist(dist, metric=_js))
 

@@ -18,3 +18,9 @@ japanese: false
 
 # whether to use TF-IDF for feature vector
 tfidf: true
+
+# use top-k lambda for PCA for each topic
+pca_topk_lambda: 300
+
+# hashing space for PCA
+pca_hashspace: 3000
