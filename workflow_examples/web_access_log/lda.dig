@@ -1,0 +1,60 @@
+_export:
+  !include : config/params.yml
+  num_topics: "${typeof(session_num_topics) === 'undefined' ? default_num_topics : session_num_topics}"
+  td:
+    database: ${dbname}
+    engine: hive
+
++show_data:
+  echo>: ${num_topics}
+
++train_lda:
+  td>: queries/train_lda.sql
+  create_table: lda_model
+
++post_train:
+  _parallel: true
+
+  +topicwords:
+    +ranking:
+      td>: queries/rankwords.sql
+      create_table: ranked_words
+      engine: presto
+
+    +collect_topicwords:
+      td>: queries/topicwords.sql
+      create_table: topicwords
+
+  +predict_topics:
+    td>: queries/predict_lda.sql
+    create_table: predicted_topics
+
++post_predict:
+  _parallel: true
+
+  +dimension_reduction:
+    +prepare_pca_input:
+      td>: queries/pca_input.sql
+      create_table: pca_input
+
+    +run_pca:
+      py>: tasks.DimensionReduction.jspca
+      docker:
+        image: "python:3.6.5"
+      _env:
+        python_apikey: ${secret:python_apikey}
+
+  +topic_proportion:
+    td>: queries/topic_proportion.sql
+    create_table: topic_proportion
+    engine: presto
+
++rename_tables:
+  td_ddl>:
+  rename_tables: [
+    { from: "lda_model", to: "${session_id}_lda_model" },
+    { from: "topicwords", to: "${session_id}_topicwords" },
+    { from: "predicted_topics", to: "${session_id}_predicted_topics" },
+    { from: "principal_component", to: "${session_id}_principal_component" },
+    { from: "topic_proportion", to: "${session_id}_topic_proportion" }
+  ]
