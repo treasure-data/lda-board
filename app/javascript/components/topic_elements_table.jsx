@@ -2,8 +2,9 @@ import React from 'react';
 import {
   Table,
 } from 'reactstrap';
-
 import PropTypes from 'prop-types';
+
+import AdditionalContents from './additional_contents';
 
 const TopicElementsTable = (props) => {
   const { docments } = props;
@@ -27,6 +28,14 @@ const TopicElementsTable = (props) => {
         {
           docments.map((doc) => {
             const { docid, proba1, contents } = doc;
+            const contentsJson = () => {
+              try {
+                return JSON.parse(contents);
+              } catch (e) {
+                return {};
+              }
+            };
+
             return (
               <tr key={docid}>
                 <td>
@@ -36,7 +45,9 @@ const TopicElementsTable = (props) => {
                   {proba1}
                 </td>
                 <td>
-                  {JSON.stringify(contents, undefined, 1)}
+                  <AdditionalContents
+                    contents={contentsJson()}
+                  />
                 </td>
               </tr>
             );
