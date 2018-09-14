@@ -22,7 +22,7 @@ collected as (
 )
 -- DIGDAG_INSERT_LINE
 select
-  collected.docid, collected.features, docs.contents
+  collected.docid, collected.features, to_json(named_struct("text", docs.contents)) as contents
 from
   collected join docs on (collected.docid = docs.docid)
 ;

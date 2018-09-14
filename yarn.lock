@@ -3232,6 +3232,12 @@ hoist-non-react-statics@^2.5.0:
   version "2.5.5"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
 
+hoist-non-react-statics@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.0.1.tgz#fba3e7df0210eb9447757ca1a7cb607162f0a364"
+  dependencies:
+    react-is "^16.3.2"
+
 home-or-tmp@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/home-or-tmp/-/home-or-tmp-2.0.0.tgz#e36c3f2d2cae7d746a857e38d18d5f32a7882db8"
@@ -3896,6 +3902,10 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
+leaflet@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.3.4.tgz#7f006ea5832603b53d7269ef5c595fd773060a40"
+
 levn@^0.3.0, levn@~0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/levn/-/levn-0.3.0.tgz#3b09924edf9f083c0490fdd4c0bc4421e04764ee"
@@ -3947,6 +3957,10 @@ locate-path@^2.0.0:
   dependencies:
     p-locate "^2.0.0"
     path-exists "^3.0.0"
+
+lodash-es@^4.0.0:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.11.tgz#145ab4a7ac5c5e52a3531fb4f310255a152b4be0"
 
 lodash-es@^4.17.5, lodash-es@~4.17.4:
   version "4.17.10"
@@ -5566,6 +5580,19 @@ react-dom@^16.4.2:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
+react-is@^16.3.2:
+  version "16.5.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.5.1.tgz#c6e8734fd548a22e1cef4fd0833afbeb433b85ee"
+
+react-leaflet@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-2.0.1.tgz#0d0543374ca1abd3507f4c4fa799e95fc8e51d85"
+  dependencies:
+    hoist-non-react-statics "^3.0.1"
+    lodash "^4.0.0"
+    lodash-es "^4.0.0"
+    warning "^4.0.0"
+
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
@@ -6918,6 +6945,12 @@ vm-browserify@0.0.4:
 warning@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
+  dependencies:
+    loose-envify "^1.0.0"
+
+warning@^4.0.0:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/warning/-/warning-4.0.2.tgz#aa6876480872116fa3e11d434b0d0d8d91e44607"
   dependencies:
     loose-envify "^1.0.0"
 
