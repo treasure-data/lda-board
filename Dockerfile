@@ -16,6 +16,5 @@ RUN apt-get update -qq \
 COPY Gemfile Gemfile.lock package.json yarn.lock /webapp/
 
 RUN bundle install
-RUN yarn install
 
 COPY . /webapp
