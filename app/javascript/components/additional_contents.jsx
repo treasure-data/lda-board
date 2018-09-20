@@ -11,16 +11,18 @@ const AdditionalContents = (props) => {
   return (
     <div>
       {JSON.stringify(contents, undefined, 1)}
-      <hr />
       {
-        (contents.lat !== undefined && contents.lon !== undefined)
+        (contents.lat && contents.lon)
           ? (
-            <Map center={[contents.lat, contents.lon]} zoom={13} style={{ width: '300px', height: '160px' }}>
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-              />
-            </Map>
+            <div>
+              <hr />
+              <Map center={[contents.lat, contents.lon]} zoom={13} style={{ width: '300px', height: '160px' }}>
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+                />
+              </Map>
+            </div>
           ) : null
       }
     </div>
