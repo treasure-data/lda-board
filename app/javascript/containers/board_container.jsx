@@ -113,7 +113,7 @@ class BoardContainer extends React.Component {
               <CardBody>
                 <span className="pr-3">
                   {'Selected Topic: '}
-                  {targetTopic}
+                  {topics[targetTopic] ? topics[targetTopic].topic_id : null}
                 </span>
 
                 <Button
