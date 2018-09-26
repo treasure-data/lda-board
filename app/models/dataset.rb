@@ -1,3 +1,5 @@
+DEFAULT_TD_CONSOLE_PATH = "https://console.treasuredata.com"
+
 class Dataset < ApplicationRecord
   has_many :topics
   has_many :lda_models
@@ -8,16 +10,19 @@ class Dataset < ApplicationRecord
   end
 
   def workflow_detail_url_on_td
-    td_console_base = ENV["TD_CONSOLE"]
-    "#{td_console_base}/app/workflows/#{self.workflow_id}/info"
+    "#{td_console_path}/app/workflows/#{self.workflow_id}/info"
   end
 
   def session_detail_url_on_td
-    td_console_base = ENV["TD_CONSOLE"]
-    "#{td_console_base}/app/workflows/#{self.workflow_id}/sessions/#{self.session_id}"
+    "#{td_console_path}/app/workflows/#{self.workflow_id}/sessions/#{self.session_id}"
   end
 
   def fetch_status
     Rails.cache.read("/datasets/#{self.id}/fetch_status")
+  end
+
+  private
+  def td_console_path
+    ENV["TD_CONSOLE"].nil? ? DEFAULT_TD_CONSOLE_PATH : ENV["TD_CONSOLE"]
   end
 end
