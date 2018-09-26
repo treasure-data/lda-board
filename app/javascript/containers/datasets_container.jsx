@@ -17,6 +17,7 @@ import NewDatasetForm from '../components/new_dataset_form';
 import {
   fetchDatasets,
   fetchWorkflows,
+  fetchDatasetStatus,
 } from '../actions';
 
 class DatasetsContainer extends React.Component {
@@ -36,7 +37,18 @@ class DatasetsContainer extends React.Component {
     const { dispatch } = this.props;
     dispatch(fetchDatasets());
 
-    this.pollingMethod = setInterval(() => { dispatch(fetchDatasets()); }, 20000);
+    this.pollingMethod = setInterval(() => {
+      const { datasets } = this.props;
+      datasets.items.map((d) => {
+        if (!d.session_id || d.status.isFetching) {
+          return 0;
+        }
+        if (!d.status || !d.status.done) {
+          dispatch(fetchDatasetStatus(d.id, true));
+        }
+        return 0;
+      });
+    }, 10000);
   }
 
   componentWillUnmount() {
