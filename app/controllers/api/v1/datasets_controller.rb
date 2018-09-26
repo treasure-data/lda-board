@@ -7,7 +7,8 @@ class Api::V1::DatasetsController < ApplicationController
   end
 
   def create
-    workflow_result = start_workflow(workflow_id: params[:workflow_id], session_params: params[:session_params])
+    wf_api = TdClient.new(current_user.td_api_key).workflow
+    workflow_result = wf_api.start_workflow(workflow_id: params[:workflow_id], session_params: params[:session_params])
 
     @dataset = Dataset.create(
       td_user_id: current_user.td_user_id,
@@ -67,7 +68,8 @@ class Api::V1::DatasetsController < ApplicationController
   end
 
   def workflows
-    @workflows = get_workflows
+    wf_api = TdClient.new(current_user.td_api_key).workflow
+    @workflows = wf_api.get_workflows
     render json: {
       workflows: @workflows
     }
@@ -79,41 +81,11 @@ class Api::V1::DatasetsController < ApplicationController
     params.permit(:workflow_id)
   end
 
-  def get_workflows
-    conn = Faraday.new
-    res = conn.get "#{ENV["TD_WORKFLOW_SERVER"]}/api/workflows?count=4000" do |req|
-      req.headers['Authorization'] = "TD1 #{current_user.td_api_key}"
-      req.headers['Content-Type'] = 'application/json'
-    end
-
-    JSON.parse(res.body)['workflows'] || []
-  end
-
-  def start_workflow(workflow_id: , session_time: Time.now.utc, session_params: {})
-    conn = Faraday.new
-    res = conn.put "#{ENV["TD_WORKFLOW_SERVER"]}/api/attempts" do |req|
-      req.headers['Authorization'] = "TD1 #{current_user.td_api_key}"
-      req.headers['Content-Type'] = 'application/json'
-      req.body = {
-        workflowId: workflow_id,
-        sessionTime: session_time.is_a?(String) ? session_time : session_time.iso8601,
-        params: session_params,
-      }.to_json
-    end
-
-    JSON.parse(res.body)
-  end
-
   def get_session_status(session_id:)
-    url = "#{ENV["TD_WORKFLOW_SERVER"]}/api/sessions/#{session_id}"
-
-     Rails.cache.fetch(url, expires_in: 1.minutes) do
-      conn = Faraday.new
-      res = conn.get url do |req|
-        req.headers['Authorization'] = "TD1 #{current_user.td_api_key}"
-        req.headers['Content-Type'] = 'application/json'
-      end
-      JSON.parse(res.body)['lastAttempt'] || {}
+    cache_key = "/api/sessions/#{session_id}"
+     Rails.cache.fetch(cache_key, expires_in: 1.minutes) do
+      wf_api = TdClient.new(current_user.td_api_key).workflow
+      wf_api.get_session_status(session_id: session_id)
     end
   end
 end
