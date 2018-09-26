@@ -6,7 +6,6 @@ import {
   Card,
   CardBody,
   CardTitle,
-  Alert,
   Button,
 } from 'reactstrap';
 import {
@@ -169,20 +168,6 @@ class BoardContainer extends React.Component {
               <CardBody className="py-0">
                 <TopTermsTable terms={ldaModel[targetTopic] || []} />
               </CardBody>
-            </Card>
-
-            <Card body>
-              <p>
-                debug info
-              </p>
-              <Alert color="dark" className="mt-4">
-                <div>
-                  <span className="mr-3">
-                    Visible Topics:
-                  </span>
-                  { targetTopicIds.join(' ') }
-                </div>
-              </Alert>
             </Card>
           </Col>
         </Row>
