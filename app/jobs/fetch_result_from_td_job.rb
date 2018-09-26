@@ -1,3 +1,5 @@
+DEFAULT_TD_API_SERVER = "https://api.treasuredata.com"
+
 class FetchResultFromTdJob < ApplicationJob
   queue_as :default
 
@@ -8,7 +10,7 @@ class FetchResultFromTdJob < ApplicationJob
     @dataset = current_dataset
 
     @client = TreasureData::Client.new(td_api_key, {
-      endpoint: ENV["TD_API_SERVER"]
+      endpoint: ENV["TD_API_SERVER"].nil? ? DEFAULT_TD_API_SERVER : ENV["TD_API_SERVER"]
     })
 
     @dbname = get_target_dbname
@@ -29,17 +31,11 @@ class FetchResultFromTdJob < ApplicationJob
     Rails.cache.write("/datasets/#{current_dataset.id}/fetch_status", "completed")
   end
 
-
   private
 
   def get_target_dbname
-    conn = Faraday.new
-    res = conn.get "#{ENV["TD_WORKFLOW_SERVER"]}/api/attempts/#{@dataset.attempt_id}/tasks" do |req|
-      req.headers['Authorization'] = "TD1 #{@api_key}"
-      req.headers['Content-Type'] = 'application/json'
-    end
-
-    _tasks = JSON.parse(res.body)['tasks'] || []
+    wf_api = TdClient.new(@api_key).workflow
+    _tasks = wf_api.get_tasks(attempt_id: @dataset.attempt_id)
     _parentTask = _tasks.select {|t| t['parentId'].nil?}
     _parentTask.first['config']['_export']['dbname']
   end
@@ -155,21 +151,3 @@ class FetchResultFromTdJob < ApplicationJob
     @dataset.predicted_topics.import(predicted_topics)
   end
 end
-
-
-
-
-
-
-
-
-
-# # fetch lda_model
-
-
-
-# # fetch principal_component
-
-
-# # fetch predicted_topics
-

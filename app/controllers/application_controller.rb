@@ -52,21 +52,12 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate_by_headers(auth_headers, auth_params)
-    client = Faraday.new
-
-    user_res = client.get "#{ENV["TD_API_SERVER"]}/v3/user/show" do |req|
-      req.headers['Authorization'] = request.headers["authorization"]
-    end
-    user_body = JSON.parse(user_res.body)
-
-    account_res = client.get "#{ENV["TD_API_SERVER"]}/v3/account/show" do |req|
-      req.headers['Authorization'] = request.headers["authorization"]
-    end
-    account_body = JSON.parse(account_res.body)
-
+    td_api = TdClient.new(auth_headers[:authorization].split(/ +/)[1]).api
+    user = td_api.get_user_show
+    account = td_api.get_account_show
     {
-      id: user_body["id"],
-      account_id: account_body["account"]["id"]
+      id: user["id"],
+      account_id: account["account"]["id"]
     }
   end
 end
