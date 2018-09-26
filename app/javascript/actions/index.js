@@ -25,10 +25,10 @@ const receiveDatasetStatus = (datasetId, datasetStatus) => ({
   datasetStatus,
 });
 
-export const fetchDatasetStatus = datasetId => (
+export const fetchDatasetStatus = (datasetId, force = false) => (
   (dispatch) => {
     dispatch(requestDatasetStatus());
-    return apiGetClient(`/api/v1/datasets/${datasetId}/status`)
+    return apiGetClient(`/api/v1/datasets/${datasetId}/status?force=${force}`)
       .then(res => dispatch(receiveDatasetStatus(datasetId, res.data)));
   }
 );

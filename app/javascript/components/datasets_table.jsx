@@ -70,10 +70,15 @@ const DatasetsTable = (props) => {
                 </a>
               </td>
               <td>
-                <WorkFlowStatusBadge
-                  status={dataset.status || {}}
-                  isFetching={dataset.isFetching === undefined ? true : dataset.isFetching}
-                />
+                {
+                  dataset.session_id !== null
+                    ? (
+                      <WorkFlowStatusBadge
+                        status={dataset.status || {}}
+                        isFetching={dataset.isFetching === undefined ? true : dataset.isFetching}
+                      />
+                    ) : null
+                }
               </td>
               <td>
                 {dataset.fetch_status}

@@ -47,7 +47,8 @@ class Api::V1::DatasetsController < ApplicationController
 
   def status
     dataset = Dataset.find(params[:dataset_id])
-    session_status = get_session_status(session_id: dataset.session_id)
+    force = ActiveRecord::Type::Boolean.new.cast(params[:force])
+    session_status = get_session_status(session_id: dataset.session_id, force: force)
     render json: session_status
   end
 
@@ -81,9 +82,9 @@ class Api::V1::DatasetsController < ApplicationController
     params.permit(:workflow_id)
   end
 
-  def get_session_status(session_id:)
+  def get_session_status(session_id:, force:)
     cache_key = "/api/sessions/#{session_id}"
-     Rails.cache.fetch(cache_key, expires_in: 1.minutes) do
+    Rails.cache.fetch(cache_key, expires_in: 30.days, force: force) do
       wf_api = TdClient.new(current_user.td_api_key).workflow
       wf_api.get_session_status(session_id: session_id)
     end
