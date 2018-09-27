@@ -22,7 +22,4 @@ services:
     depends_on:
       - postgresql
     environment:
-      - TD_CONDOLE=https://console.treasuredata.com
-      - TD_API_SERVER=https://api.treasuredata.com
-      - TD_WORKFLOW_SERVER=https://api-workflow.treasuredata.com
       - LDA_BOARD_DATABASE_HOST=postgresql
