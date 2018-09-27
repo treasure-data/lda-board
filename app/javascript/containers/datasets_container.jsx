@@ -40,6 +40,10 @@ class DatasetsContainer extends React.Component {
     this.pollingMethod = setInterval(() => {
       const { datasets } = this.props;
       datasets.items.map((d) => {
+        if (d.fetch_status === 'working') {
+          dispatch(fetchDatasets());
+          return 0;
+        }
         if (!d.session_id || d.status.isFetching) {
           return 0;
         }
