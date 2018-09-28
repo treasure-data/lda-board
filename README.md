@@ -31,6 +31,14 @@ $ docker-compose run web bundle exec rails assets:precompile
 ## LDA Workflow
 Sample workflows are available on https://github.com/treasure-data/lda-board/tree/master/workflow_examples
 
+## Deploy using Docker
+Lda-board can be deploy using Docker.
+Some environment variables are available for connecting an external PostgreSQL instance (e.g. Official Docker images, Amazon RDS).
+```
+docker build -t lda-board:latest .
+docker run -d -p 8080:8080 --name lda-board-web -e LDA_BOARD_DATABASE_DBNAME=... -e LDA_BOARD_DATABASE_HOST=... -e LDA_BOARD_DATABASE_PASSWORD=... -e LDA_BOARD_DATABASE_USERNAME=... lda-board:latest sh -c "bundle exec rails db:migrate && bundle exec rake assets:precompile && bundle exec rails s -p 8080 -b 0.0.0.0"
+```
+
 ## Development
 ### Setup
 ```
