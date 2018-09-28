@@ -1,5 +1,5 @@
 # lda-board
-LDA-board is a topic model visualization UI using LDA.
+LDA-board is a topic model visualization UI using LDA.
 
 ![lda-board](https://github.com/treasure-data/lda-board/raw/master/public/screen_shot.png)
 
