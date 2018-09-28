@@ -14,7 +14,7 @@ services:
 
   web:
     build: .
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
     volumes:
       - .:/webapp
     ports:
@@ -22,7 +22,4 @@ services:
     depends_on:
       - postgresql
     environment:
-      - TD_CONDOLE=https://console.treasuredata.com
-      - TD_API_SERVER=https://api.treasuredata.com
-      - TD_WORKFLOW_SERVER=https://api-workflow.treasuredata.com
       - LDA_BOARD_DATABASE_HOST=postgresql
